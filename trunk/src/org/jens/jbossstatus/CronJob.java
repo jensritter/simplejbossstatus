@@ -65,6 +65,7 @@ public class CronJob implements Job{
 				rrdDb = new RrdDb(getFilename());
 			} catch (FileNotFoundException e) {
 				initRRD();
+				rrdDb = new RrdDb(getFilename());
 			}
 			Sample sample = rrdDb.createSample();
 			long time = Collector.getUnixTimeStamp();

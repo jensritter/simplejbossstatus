@@ -130,9 +130,10 @@ public class Collector extends HttpServlet implements Servlet {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws RrdException the rrd exception
 	 */
-	private void graph(String db,int scale, OutputStream out) throws IOException, RrdException {
-		logger.debug("SCALE: " + scale);
-		if (scale == 0) {
+	private void graph(String db,int scaleValue, OutputStream out) throws IOException, RrdException {
+		logger.debug("SCALE: " + scaleValue);
+		int scale = scaleValue;
+		if (scaleValue == 0) {
 			scale = 10*60;
 		}
 		
