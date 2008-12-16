@@ -228,7 +228,7 @@ public class Collector extends HttpServlet implements Servlet, Job {
 					st.append(":");
 				}
 			}
-			logger.info(st.toString());
+			logger.debug(st.toString());
 			//sample.setAndUpdate(time +":" + count1+":"+count2+":" + count3);
 			sample.setAndUpdate(st.toString());
 			rrdDb.close();
