@@ -273,7 +273,7 @@
 		<echo message="done" />
 	</target>
 	
-	<target name="findbugs" depends="jar">
+	<target name="findbugs" depends="war">
 		<!-- FindBugs task -->
 		<path id="findbugs-lib">
 			<pathelement location="${findbugs.home}/lib/findbugs-ant.jar"/>
@@ -287,8 +287,8 @@
 			>
 			<!-- <auxClasspath path="${basedir}/lib/Regex.jar" /> -->
 			<sourcePath path="${basedir}/src/" />
-			<class location="${dist.dir}/${jar.file}" />
-			<!-- <class location="${dist.dir}/${deploy.war}" /> -->
+			<!-- <class location="${dist.dir}/${jar.file}" /> -->
+			<class location="${dist.dir}/${deploy.war}" />
 		</findbugs>
 	</target>
 
