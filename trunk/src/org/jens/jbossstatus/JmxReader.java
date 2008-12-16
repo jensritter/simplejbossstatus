@@ -400,7 +400,9 @@ public class JmxReader {
 			if (line.startsWith("jboss.ws:context=")) {
 				Matcher m = p.matcher(line);
 				if (m.find()) {
-					result.add(m.group(1));
+					if (!line.contains("recordProcessor")) {
+						result.add(m.group(1));
+					}
 				}
 			}
 		}
