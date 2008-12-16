@@ -55,23 +55,25 @@ import org.quartz.TriggerUtils;
 /**
  * Servlet implementation class Collector
  */
-public class Collector extends HttpServlet implements Servlet, Job {
+public class Collector extends HttpServlet implements Servlet {
 	private final Log logger = LogFactory.getLog(Collector.class);
 	private static final long serialVersionUID = 1L;
 	
-	private static final String FILENAME="jbossstatus.jrrd";
-	private static final int EVERY_SECOND=60*5;
+	public static final int EVERY_SECOND=60*5;
+	//public static final int EVERY_SECOND=1;
 	
-	private static Long getUnixTimeStamp() {
+	public static Long getUnixTimeStamp() {
 		return new Date().getTime()/ 1000L;
 	}
+	
     
     @Override
     public void init() {
     	try {
-	        File test = new File(FILENAME);
+    		CronJob job = new CronJob();
+	        File test = new File(job.getFilename());
 	        if (!test.exists()) {
-	        	initRRD();
+	        	job.initRRD(); 
 	        }
         
 			SchedulerFactory schedFact = new org.quartz.impl.StdSchedulerFactory();
@@ -82,7 +84,7 @@ public class Collector extends HttpServlet implements Servlet, Job {
 				scheduler.deleteJob("gatherData", "defaultGroup");
 			}
 			JobDetail jobDetail = new JobDetail("gatherData",
-					"defaultGroup",Collector.class);
+					"defaultGroup",CronJob.class);
 			//Trigger trigger = TriggerUtils.makeMinutelyTrigger(5);
 			Trigger trigger = TriggerUtils.makeSecondlyTrigger(EVERY_SECOND);
 			trigger.setStartTime(new Date());
@@ -99,38 +101,7 @@ public class Collector extends HttpServlet implements Servlet, Job {
 		}
     }
 
-	private void initRRD() throws RrdException, IOException, NamingException {
-		RrdDef rrdDef = new RrdDef(FILENAME);
-		rrdDef.setStartTime(getUnixTimeStamp());
-		rrdDef.setStep(EVERY_SECOND);
-		JmxReader reader = new JmxReader(new InitialContext());
-		String[] jdbcList = reader.listJdbc();
-		String[] wsList = reader.listWebServices();
-		for(String it : jdbcList) {
-			logger.info("Creating JDBC-Database : " + it);
-			rrdDef.addDatasource(it, DsTypes.DT_GAUGE, 600, Double.NaN, Double.NaN);
-		}
-		for(String it : wsList) {
-			logger.info("Creating WS-Database : " + it);
-			rrdDef.addDatasource(it+"_FAULT", DsTypes.DT_COUNTER, 600, Double.NaN, Double.NaN);
-			rrdDef.addDatasource(it+"_COUNT", DsTypes.DT_COUNTER, 600, Double.NaN, Double.NaN);
-		}
-		//rrdDef.addDatasource("ws_sitaraService", DsTypes.DT_COUNTER, 600, Double.NaN, Double.NaN);
-		rrdDef.addArchive(ConsolFuns.CF_AVERAGE, 0.5, 1, 600);
-		rrdDef.addArchive(ConsolFuns.CF_AVERAGE, 0.5, 6, 700);
-		rrdDef.addArchive(ConsolFuns.CF_AVERAGE, 0.5, 24, 775);
-		rrdDef.addArchive(ConsolFuns.CF_AVERAGE, 0.5, 288, 797);
-		rrdDef.addArchive(ConsolFuns.CF_MAX, 0.5, 1, 600);
-		rrdDef.addArchive(ConsolFuns.CF_MAX, 0.5, 6, 700);
-		rrdDef.addArchive(ConsolFuns.CF_MAX, 0.5, 24, 775);
-		rrdDef.addArchive(ConsolFuns.CF_MAX, 0.5, 288, 797);
-
-
-		
-		
-		RrdDb rrdDb = new RrdDb(rrdDef);
-		rrdDb.close();
-	}
+	
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -172,8 +143,9 @@ public class Collector extends HttpServlet implements Servlet, Job {
 		RrdGraphDef graphDef = new RrdGraphDef();
 		long time = getUnixTimeStamp();
 		long beginTime = time - scale*60;
+		CronJob job = new CronJob();
 		graphDef.setTimeSpan(beginTime, time);
-		graphDef.datasource(db, FILENAME, db, ConsolFuns.CF_AVERAGE);
+		graphDef.datasource(db,job.getFilename(), db, ConsolFuns.CF_AVERAGE);
 		graphDef.line(db, new Color(0xFF, 0, 0), null, 2);
 		graphDef.setFilename("-"); // inMemory !!
 		graphDef.setImageFormat("PNG");
@@ -186,71 +158,4 @@ public class Collector extends HttpServlet implements Servlet, Job {
 		graph.render(bi.getGraphics());
 		javax.imageio.ImageIO.write(bi,"png",out);
 	}
-
-	@Override
-	public void execute(JobExecutionContext arg0) throws JobExecutionException {
-		
-		try {
-			Context ctx = new InitialContext();
-			JmxReader reader = new JmxReader(ctx);
-			String[] jdbcList = reader.listJdbc();
-			String[] wsList = reader.listWebServices();
-			long[] jcounter = new long[jdbcList.length];
-			long[] w1counter = new long[wsList.length];
-			long[] w2counter = new long[wsList.length];
-			int counter=0;
-			for(String it : jdbcList) {
-				jcounter[counter++] = reader.getJdbcConnectionCount(it);
-			}
-			counter=0;
-			for(String it : wsList) {
-				w1counter[counter] = reader.getWsFaultCount(it);
-				w2counter[counter++] = reader.getWsRequestCount(it);
-			}
-			RrdDb rrdDb = null;
-			try {
-				rrdDb = new RrdDb(FILENAME);
-			} catch (FileNotFoundException e) {
-				initRRD();
-			}
-			Sample sample = rrdDb.createSample();
-			long time = getUnixTimeStamp();
-			StringBuilder st = new StringBuilder();
-			st.append(time).append(":");
-			for(int i=0; i < jdbcList.length; i++) {
-				st.append(jcounter[i]).append(":");
-			}
-			
-			for(int i = 0; i<wsList.length; i++ ) {
-				st.append(w1counter[i]).append(":");
-				st.append(w2counter[i]);
-				if (i<wsList.length-1) {
-					st.append(":");
-				}
-			}
-			logger.debug(st.toString());
-			//sample.setAndUpdate(time +":" + count1+":"+count2+":" + count3);
-			sample.setAndUpdate(st.toString());
-			rrdDb.close();
-			
-		} catch (NamingException e) {
-			throw new JobExecutionException(e);
-		} catch (IOException e) {
-			throw new JobExecutionException(e);
-		} catch (RrdException e) {
-			throw new JobExecutionException(e);
-		} catch (AttributeNotFoundException e) {
-			throw new JobExecutionException(e);
-		} catch (InstanceNotFoundException e) {
-			throw new JobExecutionException(e);
-		} catch (MalformedObjectNameException e) {
-			throw new JobExecutionException(e);
-		} catch (MBeanException e) {
-			throw new JobExecutionException(e);
-		} catch (ReflectionException e) {
-			throw new JobExecutionException(e);
-		}
-		
-	}
-
 }
