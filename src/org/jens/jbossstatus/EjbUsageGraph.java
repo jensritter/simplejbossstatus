@@ -20,22 +20,24 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+// TODO: Auto-generated Javadoc
 /**
- * Servlet implementation class EjbUsageGraph
+ * Servlet implementation class EjbUsageGraph.
  */
 public class EjbUsageGraph extends HttpServlet {
+	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
-       
+	
     /**
-     * @see HttpServlet#HttpServlet()
+     * Instantiates a new ejb usage graph.
      */
     public EjbUsageGraph() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -67,6 +69,20 @@ public class EjbUsageGraph extends HttpServlet {
 		}
 	}
 
+	/**
+	 * Gets the creates the count.
+	 * 
+	 * @param reader the reader
+	 * @param ejb the ejb
+	 * 
+	 * @return the creates the count
+	 * 
+	 * @throws AttributeNotFoundException the attribute not found exception
+	 * @throws InstanceNotFoundException the instance not found exception
+	 * @throws MBeanException the m bean exception
+	 * @throws ReflectionException the reflection exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private JFreeChart getCreateCount(JmxReader reader, String ejb) throws AttributeNotFoundException, InstanceNotFoundException, MBeanException, ReflectionException, IOException {
 		DefaultCategoryDataset data = new DefaultCategoryDataset();
 		int used = reader.getEjbCurrentSize(ejb);

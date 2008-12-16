@@ -3,7 +3,6 @@ package org.jens.jbossstatus;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.sql.Date;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
@@ -34,7 +33,7 @@ public class JmxReaderTest {
 	Context ctx = null;
 	JmxReader reader = null;
 	
-	public static final String jndi="jdbc/foto";
+	public static final String JNDI_JDBC="jdbc/foto";
 
 	
 	@Before
@@ -51,37 +50,37 @@ public class JmxReaderTest {
 
 	@Test
 	public void testGetMaxConnectionsInUse() throws AttributeNotFoundException, InstanceNotFoundException, MalformedObjectNameException, MBeanException, ReflectionException, IOException {
-		assertTrue(reader.getJdbcMaxConnectionsInUse(jndi) >= 0);
+		assertTrue(reader.getJdbcMaxConnectionsInUse(JNDI_JDBC) >= 0);
 	}
 
 	@Test
 	public void testGetMaxSize() throws AttributeNotFoundException, InstanceNotFoundException, MalformedObjectNameException, MBeanException, ReflectionException, IOException {
-		assertEquals(MAXSIZE,reader.getJdbcMaxSize(jndi));
+		assertEquals(MAXSIZE,reader.getJdbcMaxSize(JNDI_JDBC));
 	}
 
 	@Test
 	public void testGetConnectionCount() throws AttributeNotFoundException, InstanceNotFoundException, MalformedObjectNameException, MBeanException, ReflectionException, IOException {
-		assertTrue(reader.getJdbcConnectionCount(jndi) >= CONNECTIONCOUNT);
+		assertTrue(reader.getJdbcConnectionCount(JNDI_JDBC) >= CONNECTIONCOUNT);
 	}
 
 	@Test
 	public void testGetAvailableConnectionCount() throws AttributeNotFoundException, InstanceNotFoundException, MalformedObjectNameException, MBeanException, ReflectionException, IOException {
-		assertEquals(AVAILABLECONNECTIONCOUNT,reader.getJdbcAvailableConnectionCount(jndi));
+		assertEquals(AVAILABLECONNECTIONCOUNT,reader.getJdbcAvailableConnectionCount(JNDI_JDBC));
 	}
 
 	@Test
 	public void testGetIdleTimeoutMinutes() throws AttributeNotFoundException, InstanceNotFoundException, MalformedObjectNameException, MBeanException, ReflectionException, IOException {
-		assertEquals(IDLETIMEOUTMINUTES,reader.getJdbcIdleTimeoutMinutes(jndi));
+		assertEquals(IDLETIMEOUTMINUTES,reader.getJdbcIdleTimeoutMinutes(JNDI_JDBC));
 	}
 
 	@Test
 	public void testGetInUseConnectionCount() throws AttributeNotFoundException, InstanceNotFoundException, MalformedObjectNameException, MBeanException, ReflectionException, IOException {
-		assertEquals(INUSECONNECTIONCOUNT,reader.getJdbcInUseConnectionCount(jndi));
+		assertEquals(INUSECONNECTIONCOUNT,reader.getJdbcInUseConnectionCount(JNDI_JDBC));
 	}
 
 	@Test
 	public void testGetMinSize() throws AttributeNotFoundException, InstanceNotFoundException, MalformedObjectNameException, MBeanException, ReflectionException, IOException {
-		assertEquals(MINSIZE,reader.getJdbcMinSize(jndi));
+		assertEquals(MINSIZE,reader.getJdbcMinSize(JNDI_JDBC));
 	}
 
 	@Test
@@ -105,7 +104,7 @@ public class JmxReaderTest {
 	}
 	
 	@Test
-	public void listEjbTest() throws MalformedObjectNameException, NullPointerException, IOException {
+	public void listEjbTest() throws MalformedObjectNameException, IOException {
 		String[] lst = reader.listEjb();
 		boolean find = false;
 		for(String it : lst) {
