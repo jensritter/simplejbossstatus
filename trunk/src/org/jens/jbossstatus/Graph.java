@@ -24,15 +24,12 @@ import org.jfree.data.category.DefaultCategoryDataset;
 /**
  * Servlet implementation class JdbcUsageGraph.
  */
-public class JdbcUsageGraph extends HttpServlet {
+public class Graph extends HttpServlet {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
-    /**
-     * Instantiates a new jdbc usage graph.
-     */
-    public JdbcUsageGraph() {
+    public Graph() {
         super();
     }
 
@@ -44,7 +41,10 @@ public class JdbcUsageGraph extends HttpServlet {
 		try {
 			Context ctx = new InitialContext();
 			JmxReader reader = new JmxReader(ctx);
+			
 			String jdbc = request.getParameter("jdbc");
+			String ejb = request.getParameter("ejb");
+			
 			if (jdbc == null ) {
 				jdbc="DefaultDS";
 			}

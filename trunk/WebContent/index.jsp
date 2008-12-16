@@ -86,7 +86,7 @@ if (wsDetails.equals("1")) {
 		}
 		out.println("<td id='jdbc-detail'>" + reader.getJdbcMaxConnectionsInUse(it) + "</td>");
 		%>
-		<td><img src="JdbcUsageGraph?jdbc=<%=it %>" /></td>
+		<td><img src="graph?jdbc=<%=it %>" /></td>
 	</tr>
 	<% } %>
 </table>
@@ -120,20 +120,10 @@ if (wsDetails.equals("1")) {
 			out.println("<td id='ejb-detail'>" + reader.getEjbRemoveCount(it) + "</td>");
 			out.println("<td id='ejb-detail'>" + reader.getEjbMaxSize(it) + "</td>");
 			out.println("<td id='ejb-detail'>" + reader.getEjbAvailableCount(it) + "</td>");
-			/*
-			out.println("<td id='ejb-detail'>" + reader.getJdbcMaxSize(it) + "</td>");
-			out.println("<td id='ejb-detail'>" + reader.getJdbcMinSize(it) + "</td>");
-			out.println("<td id='ejb-detail'>" + reader.getJdbcIdleTimeoutMinutes(it) + "</td>");
-			
-			out.println("<td id='ejb-detail'>" + reader.getJdbcConnectionCount(it) + "</td>");
-			out.println("<td id='ejb-detail'>" + reader.getJdbcAvailableConnectionCount(it) + "</td>");
-
-			out.println("<td id='ejb-detail'>" + reader.getJdbcInUseConnectionCount(it) + "</td>");
-			*/
 		}
 		out.println("<td id='ejb-detail'>" + reader.getEjbCreateCount(it) + "</td>");
 		%>
-		<td><img src="EjbUsageGraph?ejb=<%=it %>" /></td>
+		<td><img src="graph?ejb=<%=it %>" /></td>
 		</tr>
 	<% } %>
 </table>
@@ -172,16 +162,10 @@ if (wsDetails.equals("1")) {
 			out.println("<td id='ws-detail'>" + reader.getWsMaxProcessingTime(it) + "</td>");
 			out.println("<td id='ws-detail'>" + reader.getWsMinProcessingTime(it) + "</td>");
 			out.println("<td id='ws-detail'>" + reader.getWsAverageProcessingTime(it) + "</td>");
-			
-			/*
-			out.println("<td id='ws-detail'>" + reader.getEjbRemoveCount(it) + "</td>");
-			out.println("<td id='ws-detail'>" + reader.getEjbMaxSize(it) + "</td>");
-			out.println("<td id='ws-detail'>" + reader.getEjbAvailableCount(it) + "</td>");
-			*/
 		}
 		out.println("<td id='ws-detail'>" + reader.getWsFaultCount(it) + "</td>");
 		%>
-		<td><img src="WsUsageGraph?ejb=<%=it %>" /></td>
+		<td><img src="graph?ejb=<%=it %>" /></td>
 		</tr>
 	<% } %>
 </table>
