@@ -394,7 +394,7 @@ public class JmxReader {
 		Set<ObjectName> names = new TreeSet<ObjectName>(server.queryNames(null, null));
 		ArrayList<ObjectName> list = new  ArrayList<ObjectName>(names);
 		ArrayList<String> result = new ArrayList<String>();
-		Pattern p = Pattern.compile("^jboss.ws:context=([a-zA-Z\\-]+),endpoint=(\\w+)$");
+		Pattern p = Pattern.compile("^jboss.ws:context=([a-zA-Z\\-]+),endpoint=(.+)$");
 		for(ObjectName it : list) {
 			String line = it.getCanonicalName();
 			if (line.startsWith("jboss.ws:context=")) {
