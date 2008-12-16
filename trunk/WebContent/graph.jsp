@@ -21,8 +21,8 @@ for(String it : reader.listJdbc()) {
 }
 for(String it : reader.listWebServices()) {
 	out.println("<tr>");
-	out.println("<td><img src='Collector?db="+it+"F&scale="+scale+"' /></td>");
-	out.println("<td><img src='Collector?db="+it+"C&scale="+scale+"' /></td>");
+	out.println("<td><img src='Collector?db="+it+"_FAULT&scale="+scale+"' /></td>");
+	out.println("<td><img src='Collector?db="+it+"_COUNTER&scale="+scale+"' /></td>");
 	out.println("</tr>");
 }
 %>

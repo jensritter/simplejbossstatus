@@ -32,6 +32,14 @@ public class CronJob implements Job{
 		return "/var/tmp/database.jrrd";
 	}
 	
+	public String getDbName(String id) {
+		int counter = 0;
+		for(int i = 0; i< id.length(); i++) {
+			counter = counter + id.charAt(i);
+		}
+		return "" + counter;
+	}
+	
 
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
@@ -114,13 +122,13 @@ public class CronJob implements Job{
 		String[] jdbcList = reader.listJdbc();
 		String[] wsList = reader.listWebServices();
 		for(String it : jdbcList) {
-			logger.info("Creating JDBC-Database : " + it);
-			rrdDef.addDatasource(it, DsTypes.DT_GAUGE, 600, Double.NaN, Double.NaN);
+			logger.info("Creating JDBC-Database : " + it + "("+getDbName(it)+")");
+			rrdDef.addDatasource(getDbName(it), DsTypes.DT_GAUGE, 600, Double.NaN, Double.NaN);
 		}
 		for(String it : wsList) {
-			logger.info("Creating WS-Database : " + it);
-			rrdDef.addDatasource(it+"F", DsTypes.DT_COUNTER, 600, Double.NaN, Double.NaN);
-			rrdDef.addDatasource(it+"C", DsTypes.DT_COUNTER, 600, Double.NaN, Double.NaN);
+			logger.info("Creating WS-Database : " + it+ "("+getDbName(it)+")");
+			rrdDef.addDatasource(getDbName(it+"_FAULT"), DsTypes.DT_COUNTER, 600, Double.NaN, Double.NaN);
+			rrdDef.addDatasource(getDbName(it+"_COUNTER"), DsTypes.DT_COUNTER, 600, Double.NaN, Double.NaN);
 		}
 		//rrdDef.addDatasource("ws_sitaraService", DsTypes.DT_COUNTER, 600, Double.NaN, Double.NaN);
 		rrdDef.addArchive(ConsolFuns.CF_AVERAGE, 0.5, 1, 600);
