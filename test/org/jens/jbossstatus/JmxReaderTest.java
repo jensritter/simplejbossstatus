@@ -3,6 +3,7 @@ package org.jens.jbossstatus;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
@@ -10,9 +11,9 @@ import javax.management.MBeanException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ReflectionException;
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.jens.Shorthand.JNDI;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,11 +35,17 @@ public class JmxReaderTest {
 	JmxReader reader = null;
 	
 	public static final String JNDI_JDBC="jdbc/foto";
+	public static final String HOSTNAME="localhost";
+	public static final int PORT=1099;
 
 	
 	@Before
 	public void init() throws NamingException {
-		ctx = JNDI.jbossContext("matrix.jens.org");
+		Properties env = new Properties();
+		env.setProperty("java.naming.factory.initial", "org.jnp.interfaces.NamingContextFactory");
+		env.setProperty("java.naming.provider.url", HOSTNAME + ":"+PORT);
+		env.setProperty("java.naming.factory.url.pkgs", "org.jboss.naming:org.jnp.interfaces");
+		ctx = new InitialContext(env);
 		reader = new JmxReader(ctx);
 	}
 
