@@ -14,9 +14,21 @@
     <display-name>Graph</display-name>
     <servlet-name>Graph</servlet-name>
     <servlet-class>org.jens.jbossstatus.Graph</servlet-class>
+    
   </servlet>
   <servlet-mapping>
     <servlet-name>Graph</servlet-name>
     <url-pattern>/graph</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>Collector</display-name>
+    <servlet-name>Collector</servlet-name>
+    <servlet-class>org.jens.jbossstatus.Collector</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Collector</servlet-name>
+    <url-pattern>/Collector</url-pattern>
   </servlet-mapping>
 </web-app>
