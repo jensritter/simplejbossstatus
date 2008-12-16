@@ -81,7 +81,6 @@
 	<target name="maven" depends="prepare">
 		<artifact:dependencies filesetId="dependency.fileset" versionsId="dependency.versions" useScope="runtime">
 			<dependency groupId="jfree" artifactId="jfreechart" version="1.0.11" />
-			<dependency groupId="org.jens" artifactId="eclipsesJava" version="1.0" />
 			<!-- 
 			<dependency groupId="org.hibernate" artifactId="hibernate-annotations" version="3.3.1.GA" />
 			<dependency groupId="org.hibernate" artifactId="hibernate-entitymanager" version="3.3.1.ga" />
