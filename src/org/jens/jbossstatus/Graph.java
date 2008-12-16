@@ -56,13 +56,13 @@ public class Graph extends HttpServlet {
 			
 			JFreeChart chart = null;
 			if (jdbc != null && !jdbc.equals("")) {
-				 chart = getConnectionCountFromSingleJdbcSmall(reader,job.getDbName(jdbc));	
+				 chart = getConnectionCountFromSingleJdbcSmall(reader,jdbc);	
 			}
 			if (ejb != null && !ejb.equals("")) {
-				chart = getCreateCount(reader,job.getDbName(ejb));
+				chart = getCreateCount(reader,ejb);
 			}
 			if (ws != null && !ws.equals("")) {
-				chart = getFailureCount(reader,job.getDbName(ws));
+				chart = getFailureCount(reader,ws);
 			}
 			response.setContentType("image/png");
 			ChartUtilities.writeChartAsPNG(response.getOutputStream(), chart, 600, 50);
