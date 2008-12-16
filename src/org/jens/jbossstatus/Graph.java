@@ -21,6 +21,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+// TODO: Auto-generated Javadoc
 /**
  * Servlet implementation class JdbcUsageGraph.
  */
@@ -29,6 +30,9 @@ public class Graph extends HttpServlet {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
+    /**
+     * Instantiates a new graph.
+     */
     public Graph() {
         super();
     }
@@ -44,16 +48,19 @@ public class Graph extends HttpServlet {
 			
 			String jdbc = request.getParameter("jdbc");
 			String ejb = request.getParameter("ejb");
+			String ws = request.getParameter("ws");
 			
-			if (jdbc == null ) {
-				jdbc="DefaultDS";
+			JFreeChart chart = null;
+			if (jdbc != null && !jdbc.equals("")) {
+				 chart = getConnectionCountFromSingleJdbcSmall(reader,jdbc);	
 			}
-			
-			
-			JFreeChart chart = getConnectionCountFromSingleJdbcSmall(reader,jdbc);
-			//JFreeChart chart = getConnectionCountFromAllJdbc(reader);
+			if (ejb != null && !ejb.equals("")) {
+				chart = getCreateCount(reader,ejb);
+			}
+			if (ws != null && !ws.equals("")) {
+				chart = getFailureCount(reader,ws);
+			}
 			response.setContentType("image/png");
-
 			ChartUtilities.writeChartAsPNG(response.getOutputStream(), chart, 600, 50);
 		} catch (NamingException e) {
 			e.printStackTrace();
@@ -151,6 +158,56 @@ public class Graph extends HttpServlet {
 		}
 		
 		JFreeChart chart = ChartFactory.createStackedBarChart("All Connections","", "", data, PlotOrientation.HORIZONTAL, false, false, false);
+		return chart;
+	}
+	
+	
+
+	/**
+	 * Gets the creates the count.
+	 * 
+	 * @param reader the reader
+	 * @param ejb the ejb
+	 * 
+	 * @return the creates the count
+	 * 
+	 * @throws AttributeNotFoundException the attribute not found exception
+	 * @throws InstanceNotFoundException the instance not found exception
+	 * @throws MBeanException the m bean exception
+	 * @throws ReflectionException the reflection exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	private JFreeChart getCreateCount(JmxReader reader, String ejb) throws AttributeNotFoundException, InstanceNotFoundException, MBeanException, ReflectionException, IOException {
+		DefaultCategoryDataset data = new DefaultCategoryDataset();
+		int used = reader.getEjbCurrentSize(ejb);
+		data.addValue(used,"used","");
+		data.addValue(reader.getEjbMaxSize(ejb) - used,"Free","");
+		
+		JFreeChart chart = ChartFactory.createStackedBarChart("","", "", data, PlotOrientation.HORIZONTAL, false, false, false);
+		return chart;
+	}
+	
+	/**
+	 * Gets the failure count.
+	 * 
+	 * @param reader the reader
+	 * @param wsName the ws name
+	 * 
+	 * @return the failure count
+	 * 
+	 * @throws AttributeNotFoundException the attribute not found exception
+	 * @throws InstanceNotFoundException the instance not found exception
+	 * @throws MBeanException the m bean exception
+	 * @throws ReflectionException the reflection exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	private JFreeChart getFailureCount(JmxReader reader, String wsName) throws AttributeNotFoundException, InstanceNotFoundException, MBeanException, ReflectionException, IOException {
+		DefaultCategoryDataset data = new DefaultCategoryDataset();
+		Long failure = reader.getWsFaultCount(wsName);
+		data.addValue(failure,"Failure","");
+		data.addValue(reader.getWsRequestCount(wsName) - failure,"Processed","");
+		
+		JFreeChart chart = ChartFactory.createStackedBarChart("","", "", data, PlotOrientation.HORIZONTAL, false, false, false);
 		return chart;
 	}
 	

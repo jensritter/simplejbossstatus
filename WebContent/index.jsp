@@ -165,7 +165,7 @@ if (wsDetails.equals("1")) {
 		}
 		out.println("<td id='ws-detail'>" + reader.getWsFaultCount(it) + "</td>");
 		%>
-		<td><img src="graph?ejb=<%=it %>" /></td>
+		<td><img src="graph?ws=<%=it %>" /></td>
 		</tr>
 	<% } %>
 </table>
