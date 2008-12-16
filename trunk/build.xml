@@ -81,6 +81,8 @@
 	<target name="maven" depends="prepare">
 		<artifact:dependencies filesetId="dependency.fileset" versionsId="dependency.versions" useScope="runtime">
 			<dependency groupId="jfree" artifactId="jfreechart" version="1.0.11" />
+			<dependency groupId="commons-logging" artifactId="commons-logging" version="1.1.1" />
+			<dependency groupId="org.jrobin" artifactId="jrobin" version="1.5.9" />
 			<!-- 
 			<dependency groupId="org.hibernate" artifactId="hibernate-annotations" version="3.3.1.GA" />
 			<dependency groupId="org.hibernate" artifactId="hibernate-entitymanager" version="3.3.1.ga" />
@@ -121,6 +123,7 @@
 		-->
 		
 		<path refid="jboss4-lib" />
+		<path refid="jboss4-quartz" />
 
 		<!-- Eigene Libs :
 			<pathelement location="../lib/httpunit.jar"/>
