@@ -15,10 +15,16 @@ import org.jrobin.core.Sample;
 import org.jrobin.graph.RrdGraph;
 import org.jrobin.graph.RrdGraphDef;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Test.
+ */
 public class Test {
-
+	
 	/**
-	 * @param args
+	 * The main method.
+	 * 
+	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -34,6 +40,12 @@ public class Test {
 		}
 	}
 	
+	/**
+	 * Run.
+	 * 
+	 * @throws RrdException the rrd exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public void run() throws RrdException, IOException {
 		RrdDef rrdDef = new RrdDef("jbossstatus.rrd");
 		rrdDef.setStartTime(920804400L);
