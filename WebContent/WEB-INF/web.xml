@@ -11,32 +11,12 @@
   </welcome-file-list>
   <servlet>
     <description></description>
-    <display-name>JdbcUsageGraph</display-name>
-    <servlet-name>JdbcUsageGraph</servlet-name>
-    <servlet-class>org.jens.jbossstatus.JdbcUsageGraph</servlet-class>
+    <display-name>Graph</display-name>
+    <servlet-name>Graph</servlet-name>
+    <servlet-class>org.jens.jbossstatus.Graph</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>JdbcUsageGraph</servlet-name>
-    <url-pattern>/JdbcUsageGraph</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <description></description>
-    <display-name>EjbUsageGraph</display-name>
-    <servlet-name>EjbUsageGraph</servlet-name>
-    <servlet-class>org.jens.jbossstatus.EjbUsageGraph</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>EjbUsageGraph</servlet-name>
-    <url-pattern>/EjbUsageGraph</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <description></description>
-    <display-name>WsUsageGraph</display-name>
-    <servlet-name>WsUsageGraph</servlet-name>
-    <servlet-class>org.jens.jbossstatus.WsUsageGraph</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>WsUsageGraph</servlet-name>
-    <url-pattern>/WsUsageGraph</url-pattern>
+    <servlet-name>Graph</servlet-name>
+    <url-pattern>/graph</url-pattern>
   </servlet-mapping>
 </web-app>
