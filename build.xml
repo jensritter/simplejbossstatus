@@ -1,0 +1,523 @@
+<?xml version="1.0"?>
+<project
+	xmlns:artifact="urn:maven-artifact-ant"
+	default="build"
+	basedir="."
+>
+	<description>Describe Your Project here</description>
+
+	<property file="../workspace.properties" />
+	<property file="mybuild.properties" />
+	<property file="appserver.properties" />
+
+	<echo message="basedir : ${basedir}" />
+	<echo message="jar.file : ${jar.file}" />
+	<echo message="dist.classname : ${dist.classname}" />
+
+	<!-- Basics -->
+
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="dist.dir" value="dist" />
+
+	<!-- Building -->
+	<property name="jar.file.small" value="prg.jar" />
+	<available file="WebContent/lib" type="dir" property="WebContent.lib"/>
+
+	<import file="${basedir}/../eclipsesJava/build.eclipse.xml" />
+
+
+	<!-- -->
+	<!-- Web/ApplicationServer -->
+	<!-- -->
+
+	<!-- Tomcat -->
+	<!--
+	<import file="${basedir}/../eclipsesJava/buildScripts/tomcat.xml" />
+	-->
+
+	<!-- Glassfish -->
+	<!--  Provides : -->
+	<!--  refid : glassfish-lib
+		  target: deployGlassfishLocal,deployGlassfishRemote
+	-->
+	<!--
+	<import file="${basedir}/../eclipsesJava/buildScripts/glassfish.xml" />
+	-->
+
+	<!--  JBoss -->
+	<!--  Provides:  -->
+	<!--  refid: jboss4-lib, jboss5-lib -->
+	<!--  target:  -->
+	<!--
+	<import file="${basedir}/../eclipsesJava/buildScripts/jboss.xml" />
+	 -->
+	
+	<import file="${basedir}/../eclipsesJava/buildScripts/jboss.xml" />
+
+	<!-- Resouces -->
+	<patternset id="fileresources">
+		<include name="**/*.png" />
+		<include name="**/*.gif" />
+		<include name="**/*.ico" />
+		<include name="**/*.jpg" />
+		<include name="**/*.jpeg" />
+		<include name="**/*.svg" />
+		<include name="**/*.xml" />
+		<include name="**/*.properties" />
+		<include name="**/*.html" />
+
+		<exclude name="**/.svn" />
+	</patternset>
+
+	<!-- Build-Dependency -->
+	<artifact:dependencies pathId="dependency.classpath">
+		<dependency groupId="junit" artifactId="junit" version="4.1"/>
+		<dependency groupId="commons-logging" artifactId="commons-logging" version="1.1.1" />
+		<dependency groupId="log4j" artifactId="log4j" version="1.2.12" />
+	</artifact:dependencies>
+
+	<!-- Deploy-Dependency -->
+	<target name="maven" depends="prepare">
+		<artifact:dependencies filesetId="dependency.fileset" versionsId="dependency.versions" useScope="runtime">
+			<dependency groupId="jfree" artifactId="jfreechart" version="1.0.11" />
+			<dependency groupId="org.jens" artifactId="eclipsesJava" version="1.0" />
+			<!-- 
+			<dependency groupId="org.hibernate" artifactId="hibernate-annotations" version="3.3.1.GA" />
+			<dependency groupId="org.hibernate" artifactId="hibernate-entitymanager" version="3.3.1.ga" />
+			<dependency groupId="org.hibernate" artifactId="hibernate-c3p0" version="3.3.1.GA" />
+			 -->
+		</artifact:dependencies>
+
+		<copy todir="WebContent/WEB-INF/lib">
+			<fileset refid="dependency.fileset" />
+			<mapper type="flatten" />
+			<!-- 
+			<mapper classpathref="maven-ant-tasks.classpath" classname="org.apache.maven.artifact.ant.VersionMapper" 
+							from="${dependency.versions}" to="flatten" />
+			 -->
+		</copy>
+	</target>
+
+	<!-- ClassPath -->
+	<path id="classpath-lib">
+		<pathelement location="${build.dir}" />
+		<fileset dir="lib">
+			<include name="*.jar" />
+		</fileset>
+
+		<path refid="dependency.classpath" />
+		
+		<path refid="eclipse-lib" />
+
+		<!-- Enable for WebProjects -->
+		<fileset dir="WebContent/WEB-INF/lib">
+			<include name="*.jar" />
+		</fileset>
+		<!--
+		<path refid="tomcat-lib" />
+		<path refid="glassfish-lib" />
+		<path refid="jboss4-lib" />
+		<path refid="jboss5-lib" />
+		-->
+		
+		<path refid="jboss4-lib" />
+
+		<!-- Eigene Libs :
+			<pathelement location="../lib/httpunit.jar"/>
+		-->
+	</path>
+
+	<!--Optional Tasks -->
+	<!-- Hibernate -->
+	<!-- Create source from hibernate.cfg.xml
+	<target name="hibernate" depends="prepare,copyResources" description="generate Java from Database through Hibernate">
+		<artifact:dependencies pathId="hibernate.tools">
+			<dependency groupId="org.hibernate" artifactId="hibernate-tools" version="3.2.0.ga" />
+		</artifact:dependencies>
+		<taskdef name="hibernatetool" classname="org.hibernate.tool.ant.HibernateToolTask" classpathref="hibernate.tools" />
+		<hibernatetool destdir="${src.dir}">
+			<classpath refid="hibernate-libs" />
+			<jdbcconfiguration configurationfile="${hibernate.cfgdir}/hibernate.cfg.xml" packagename="org.jens.nagios2ndo.model.hibernate" revengfile="${hibernate.cfgdir}/hibernate.rev.xml" detectmanytomany="true" detectoptimisticlock="true" />
+			<hbm2java jdk5="true" ejb3="true" />
+		</hibernatetool>
+	</target>
+	-->
+
+	<target name="initProject">
+		<mkdir dir="${basedir}/lib" />
+		<mkdir dir="${basedir}/test" />
+		<mkdir dir="${hibernate.cfgdir}" />
+		<copy todir="src" file="../eclipsesJava/template/log4j.properties" />
+		<copy todir="${hibernate.cfgdir}" file="../eclipsesJava/template/hibernateconfig/META-INF/persistence.xml" />
+		<antcall target="maven"/>
+	</target>
+
+	<!--  Fun  -->
+	<!--
+	<taskdef name="sound" classname="org.apache.tools.ant.taskdefs.optional.sound.SoundTask"/>
+	<sound>
+		<success source="data/ok.wav" loops="0" duration="1"/>
+		<fail source="data/fail.wav" loops="0" duration="1"/>
+    </sound>
+ 	-->
+	<!-- Actual Work: -->
+
+	<target name="clean" description="remove build and dist directory">
+		<delete dir="${dist.dir}" />
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="copyResources" depends="prepare" description="copy resources into build">
+		<copy todir="${build.dir}">
+			<fileset dir="${src.dir}">
+				<patternset refid="fileresources" />
+			</fileset>
+		</copy>
+	</target>
+
+<!-- 
+	<import file="${basedir}/../eclipsesJava/buildScripts/jboss.xml" />
+ -->
+	<target name="wsimport" depends="prepare" description="Erzeugt die Client-Stub-Classen">
+		<mkdir dir="${build.dir}/Stub"/>
+		<!--
+		<exec executable="${wsimport.exe}">
+			<arg value="-d" />
+			<arg value="${build.dir}/Stub/" />
+			<arg value="${wsimport.url}" />
+		</exec>
+		-->
+		<taskdef name="wsconsume" classname="org.jboss.wsf.spi.tools.ant.WSConsumeTask">
+			<classpath refid="wsconsume-lib"/>						
+		</taskdef>		
+		<wsconsume 
+				  fork="true"
+				  verbose="true"
+				  destdir="${build.dir}/Stub/"
+				  sourcedestdir="${build.dir}/Stub/"
+				  keep="true"
+				  wsdl="${wsimport.url}">
+				</wsconsume>
+
+		<delete file="lib/WS-Stub.jar"/>
+		<jar destfile="lib/WS-Stub.jar">
+			<fileset dir="${build.dir}/Stub/">
+				<include name="**/**" />
+			</fileset>
+		</jar>
+		<delete dir="${build.dir}/Stub" />
+	</target>
+
+	<!--  f. Sun's WebServices  -->
+	<target name="wsgen" depends="build" description="Benoetigte WS Stubs erzeugen">
+		<exec executable="wsgen">
+			<!--  <arg value="-verbose" />  -->
+			<arg value="-d" />
+			<arg value="${build.dir}" />
+			<arg value="-cp"/>
+			<arg value="${build.dir}" />
+			<arg value="${wsgen.class}" />
+		</exec>
+	</target>
+
+	<target name="buildDependencies"
+		depends="maven,copyResources"
+	>
+		<!-- Available Dependencies :
+
+		buildEclipsesJava
+			The basic Class-Files . . .
+
+		copyResources
+			The basic local resouces
+
+		copyPersistConfig
+			(if needed)
+
+		wsimport
+			(may be executed only once in the development-circle)
+		-->
+	</target>
+
+	<target name="build" depends="buildDependencies,copyResources" description="build the project">
+		<javac srcdir="${src.dir}" destdir="${build.dir}" encoding="UTF-8" debug="true" classpathref="classpath-lib">
+			<include name="**/*.java" />
+			<!-- <compilerarg value="-Xlint:unchecked"/>-->
+		</javac>
+	</target>
+
+	<target name="build-test" depends="build" description="build the test-files">
+		<javac srcdir="${test.dir}" destdir="${build.dir}" encoding="UTF-8" debug="true" classpathref="classpath-lib">
+			<include name="**/*.java" />
+			<!-- <compilerarg value="-Xlint:unchecked"/>-->
+		</javac>
+	</target>
+
+	<target name="junit" depends="build-test" description="run junit">
+		<mkdir dir="${test.result}"/>
+		<junit printsummary="yes" haltonerror="true" haltonfailure="no" showoutput="true">
+			<formatter type="xml"/>
+			<classpath refid="classpath-lib"/>
+			<batchtest fork="yes" todir="${test.result}">
+			<fileset dir="test">
+				<include name="**/*Test*.java"/>
+		    </fileset>
+		  </batchtest>
+		</junit>
+	</target>
+	
+	<target name="hudson" depends="build,junit,findbugs" description="Hudon-Task">
+		<echo message="done" />
+	</target>
+	
+	<target name="findbugs" depends="jar">
+		<!-- FindBugs task -->
+		<path id="findbugs-lib">
+			<pathelement location="${findbugs.home}/lib/findbugs-ant.jar"/>
+		</path>
+		<taskdef name="findbugs" classpathref="findbugs-lib" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
+		<findbugs home="${findbugs.home}" 
+			outputFile="${dist.dir}/findbugs.xml" output="xml"
+			quietErrors="true"
+			reportLevel="low"
+			excludeFilter="../eclipsesJava/template/findbugs.exclude.xml"
+			>
+			<!-- <auxClasspath path="${basedir}/lib/Regex.jar" /> -->
+			<sourcePath path="${basedir}/src/" />
+			<class location="${dist.dir}/${jar.file}" />
+			<!-- <class location="${dist.dir}/${deploy.war}" /> -->
+		</findbugs>
+	</target>
+
+	<target name="jar_small" depends="jar_small_mainclass,jar_small_nomainclass"  description="Only the local Programm">
+	</target>
+
+	<target name="jar_small_mainclass" depends="build" if="mainclass.present">
+		<jar destfile="${dist.dir}/${jar.file.small}">
+			<manifest>
+				<attribute name="Main-Class" value="${dist.classname}" />
+			</manifest>
+			<fileset dir="${build.dir}">
+				<patternset refid="fileresources" />
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="jar_small_nomainclass" depends="build" if="mainclass.missing">
+			<jar destfile="${dist.dir}/${jar.file.small}">
+				<fileset dir="${build.dir}">
+					<patternset refid="fileresources" />
+					<include name="**/*.class" />
+				</fileset>
+			</jar>
+	</target>
+	
+	<target name="jar_ejb" depends="build" description="jar-task f. erstellen von EJB's">
+			<jar destfile="${dist.dir}/${jar.file.small}">
+				<fileset dir="${build.dir}">
+					<patternset refid="fileresources" />
+					<include name="**/*.class" />
+					<exclude name="**/common/*" />
+				</fileset>
+			</jar>
+	</target>
+
+	<!--  Change target "jar" to depends="jar_ebj" if this is a EJB -->
+	<target name="jar" depends="jar_small" description="Makes a jar from the build">
+		<!-- Merge the Others ... -->
+		<zip duplicate="preserve" destfile="${dist.dir}/${jar.file}">
+			<zipfileset src="${dist.dir}/${jar.file.small}" />
+			<zipgroupfileset dir="lib" includes="*.jar"/>
+		</zip>
+	</target>
+	
+	
+	<target name="signJar" depends="jar" description="sign Jar">
+		<signjar jar="${dist.dir}/${jar.file}" signedjar="${dist.dir}/${jar.signed.file}" storepass="${jar.signed.storepass}" keypass="${jar.signed.keypass}" alias="${jar.signed.alias}" />
+	</target>
+	
+	<target name="lightJar" depends="build">
+		<jar destfile="${dist.dir}/lightJar_.jar" update="true">
+			<fileset dir="${build.dir}">
+				<include name="**/*Remote.class" />
+				<include name="**/*Local.class" />
+			</fileset>
+		</jar>
+		<signjar jar="${dist.dir}/lightJar_.jar" signedjar="${dist.dir}/lightJar.jar" storepass="${jar.signed.storepass}" keypass="${jar.signed.keypass}" alias="${jar.signed.alias}" />
+	</target>
+
+	<target name="common" depends="build">
+		<jar destfile="${dist.dir}/common_.jar" update="true">
+			<fileset dir="${build.dir}">
+				<include name="**/common/**/*.class" />
+			</fileset>
+		</jar>
+		<signjar jar="${dist.dir}/common_.jar" signedjar="${dist.dir}/common.jar" storepass="${jar.signed.storepass}" keypass="${jar.signed.keypass}" alias="${jar.signed.alias}" />
+	</target>
+
+	<target name="webstart" depends="signJar" description="assemble JNLP">
+		<copy file="data/start.jnlp.xml" tofile="${dist.dir}/${webstart.filename}" />
+		<replace file="${dist.dir}/${webstart.filename}" value="${dist.version}">
+			<replacetoken>$VERSION</replacetoken>
+		</replace>
+		<replace file="${dist.dir}/${webstart.filename}" value="${webstart.url}">
+			<replacetoken>$URL</replacetoken>
+		</replace>
+		<replace file="${dist.dir}/${webstart.filename}" value="${dist.classname}">
+			<replacetoken>$MAINCLASS</replacetoken>
+		</replace>
+		<replace file="${dist.dir}/${webstart.filename}" value="${webstart.filename}">
+			<replacetoken>$JNLP_FILENAME</replacetoken>
+		</replace>
+		<replace file="${dist.dir}/${webstart.filename}" value="${webstart.title}">
+			<replacetoken>$TITLE</replacetoken>
+		</replace>
+		<replace file="${dist.dir}/${webstart.filename}" value="${webstart.vendor}">
+			<replacetoken>$VENTOR</replacetoken>
+		</replace>
+		<replace file="${dist.dir}/${webstart.filename}" value="${webstart.description}">
+			<replacetoken>$DESCRIPTION</replacetoken>
+		</replace>
+		<replace file="${dist.dir}/${webstart.filename}" value="${webstart.menu}">
+			<replacetoken>$MENU</replacetoken>
+		</replace>
+		<replace file="${dist.dir}/${webstart.filename}" value="${jar.signed.file}">
+			<replacetoken>$JAR</replacetoken>
+		</replace>
+		<replace file="${dist.dir}/${webstart.filename}" value="${webstart.ico}">
+			<replacetoken>$ICON</replacetoken>
+		</replace>
+	</target>
+
+	<target name="warDependencies" depends="build">
+		<!-- Available Dependencies :
+		build
+			MUST
+		wsgen
+			Create the Classes, needed for Sun's Jaxws
+		-->
+	</target>
+	
+	<target name="ejb" depends="signJar,common,lightJar">
+		<echo message="ejb done" />
+	</target>
+	
+	<target name="ejbDependencies" depends="prepare" description="Build-extern EJB Project and copy dist-files">
+		<ant antfile="build.xml" dir="../ejbDirectory" target="ejb" inheritall="false"/>
+		<mkdir dir="${dist.dir}/lib" />
+		<copy todir="${dist.dir}" file="../ejbDirectory/dist/JavaApp.jar" />
+		<copy todir="${dist.dir}/lib" file="../ejbDirectory/dist/common.jar" />
+		<copy todir="${dist.dir}/lib" file="../ejbDirectory/dist/lightJar.jar" />
+	</target>
+
+	<target name="war" depends="warDependencies" description="assemble War">
+		<war destfile="${dist.dir}/${deploy.war}" webxml="WebContent/WEB-INF/web.xml">
+			<fileset dir="WebContent/">
+				<exclude name="**/web.xml" />
+			</fileset>
+			<classes dir="${build.dir}">
+				<include name="**/*.class" />
+				<patternset refid="fileresources" />
+				<!-- <exclude name="**/ejb*"/> -->
+			</classes>
+			<!--
+				<fileset dir="${dist}" includes="${signjar}" />
+				<fileset dir="others" includes="${jnlpfile}" />
+				-->
+		</war>
+	</target>
+	
+	<target name="ear" depends="war">
+		<mkdir dir="${dist.dir}/lib" />
+		
+		<!--  Die EJB's  -->
+		<artifact:dependencies filesetId="ejb.fileset" useScope="runtime" versionsId="ejb.versions">
+			<!-- <dependency groupId="org.jens.testing" artifactId="JB5EJB" version="1.0" />  -->
+		</artifact:dependencies>
+		
+		<!-- Die Library-Libs -->
+		<artifact:dependencies filesetId="dependency.fileset" useScope="runtime">
+			<dependency groupId="org.jens" artifactId="eclipsesJava" version="1.0" />
+			<!-- <dependency groupId="org.jens.testing" artifactId="JB5EJB-common" version="1.0" />  -->
+		</artifact:dependencies>
+		
+		<copy todir="${dist.dir}">
+			<fileset refid="ejb.fileset" />
+			<mapper classpathref="maven-ant-tasks.classpath" classname="org.apache.maven.artifact.ant.VersionMapper" 
+							from="${ejb.versions}" to="flatten" />
+		</copy>
+		
+		<copy todir="${dist.dir}/lib">
+			<fileset refid="dependency.fileset" />
+			<mapper type="flatten" />
+		</copy>
+		<ear destfile="${dist.dir}/${dist.name}.ear" appxml="data/application.xml">
+			<fileset dir="${dist.dir}" includes="*.war"/>
+			<fileset dir="${dist.dir}" includes="*.jar"/>
+			<fileset dir="${dist.dir}" includes="*.xml"/>
+			<fileset dir="${dist.dir}" includes="lib/*"/>
+		</ear>
+	</target>
+	
+	<target name="deploy-maven" depends="signJar,lightJar,common">
+		<artifact:pom id="maven.project" file="data/pom.xml" />
+		<!-- 
+		<artifact:deploy file="${dist.dir}/${deploy.war}">
+		  -->
+	  	<artifact:deploy file="${dist.dir}/${jar.signed.file}">
+	  		<remoteRepository url="${nexus.releaseurl}" id="releases" />
+	  		<pom refid="maven.project"/>
+	  	</artifact:deploy>
+	  	<!-- 
+		<artifact:pom id="mavenlight.project" file="data/pom-light.xml" />
+	  	<artifact:deploy file="${dist.dir}/lightJar.jar">
+	  		<remoteRepository url="${nexus.releaseurl}" id="releases" />
+	  		<pom refid="mavenlight.project"/>
+	  	</artifact:deploy>
+		<artifact:pom id="mavencommon.project" file="data/pom-common.xml" />
+	  	<artifact:deploy file="${dist.dir}/common.jar">
+	  		<remoteRepository url="${nexus.releaseurl}" id="releases" />
+	  		<pom refid="mavencommon.project"/>
+	  	</artifact:deploy>
+	  	 -->
+	</target>
+	
+	<target name="run" depends="jar" description="Run MainClass">
+		<java fork="true" classname="${dist.classname}" classpath="${dist.dir}/${jar.file}" />
+	</target>
+
+	<!-- Deploy:WebStarts :
+	<target name="deploy" depends="webstart">
+		<copy toDir="${webstart.deployDir}">
+			<fileset dir="${dist.dir}">
+				<include name="${jar.signed.file}"/>
+				<include name="${webstart.filename}"/>
+			</fileset>
+			<fileset dir="data">
+				<include name="${webstart.ico}" />
+			</fileset>
+		</copy>
+	</target>
+	-->
+
+	<!-- Deploy Glassfish Apps :
+	<target name ="deploy" depends="war,deployGlassfishRemote">
+
+	</target>
+	-->
+
+	<!-- Tomcat
+	<target name="deploy" depends="war, TomcatStop, TomcatUndeploy, TomcatDeploy">
+		<echo message="deployed" />
+	</target>
+	-->
+	
+	<!--  Deploy JBOSS -->
+	<target name="deploy-jboss" depends="war">
+		<copy todir="${jboss4.deploy.local}" file="${dist.dir}/${deploy.war}" />
+		<echo message="deployed" />
+	</target>
+	 
+</project>
