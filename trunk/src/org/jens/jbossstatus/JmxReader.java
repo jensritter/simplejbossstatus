@@ -394,15 +394,13 @@ public class JmxReader {
 		Set<ObjectName> names = new TreeSet<ObjectName>(server.queryNames(null, null));
 		ArrayList<ObjectName> list = new  ArrayList<ObjectName>(names);
 		ArrayList<String> result = new ArrayList<String>();
-		Pattern p = Pattern.compile("^jboss.ws:context=([a-zA-Z\\-]+),endpoint=(.+)$");
+		Pattern p = Pattern.compile("^jboss.ws:context=.+,endpoint=([^,]+)$");
 		for(ObjectName it : list) {
 			String line = it.getCanonicalName();
-			if (line.startsWith("jboss.ws:context=")) {
-				Matcher m = p.matcher(line);
-				if (m.find()) {
-					if (!line.contains("recordProcessor")) {
-						result.add(m.group(1));
-					}
+			Matcher m = p.matcher(line);
+			if (m.find()) {
+				if (!line.contains("recordProcessor")) {
+					result.add(m.group(1));
 				}
 			}
 		}
@@ -412,7 +410,7 @@ public class JmxReader {
 	private ObjectName findWs(String name) throws IOException {
 		Set<ObjectName> names = new TreeSet<ObjectName>(server.queryNames(null, null));
 		ArrayList<ObjectName> list = new  ArrayList<ObjectName>(names);
-		Pattern p = Pattern.compile("^jboss.ws:context="+name+",endpoint=(.+)$");
+		Pattern p = Pattern.compile("^jboss.ws:context=.+,endpoint="+name+"$");
 		for(ObjectName it : list) {
 			String line = it.getCanonicalName();
 			Matcher m = p.matcher(line);

@@ -19,7 +19,7 @@ import org.junit.Test;
 
 public class JmxReaderTest {
 	
-	private static final String WS_NAME = "FotoBrowser-FotoBrowserEJB";
+	private static final String WS_NAME = "FotoBrowserBean";
 	private static final String EJB_NAME = "FotoBrowserBean";
 	private static final int MAXSIZE = 20;
 	private static final int CONNECTIONCOUNT = 0;
@@ -35,7 +35,7 @@ public class JmxReaderTest {
 	JmxReader reader = null;
 	
 	public static final String JNDI_JDBC="jdbc/foto";
-	public static final String HOSTNAME="localhost";
+	public static final String HOSTNAME="matrix";
 	public static final int PORT=1099;
 
 	
