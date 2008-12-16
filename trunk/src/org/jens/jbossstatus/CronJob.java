@@ -119,8 +119,8 @@ public class CronJob implements Job{
 		}
 		for(String it : wsList) {
 			logger.info("Creating WS-Database : " + it);
-			rrdDef.addDatasource(it+"_FAULT", DsTypes.DT_COUNTER, 600, Double.NaN, Double.NaN);
-			rrdDef.addDatasource(it+"_COUNT", DsTypes.DT_COUNTER, 600, Double.NaN, Double.NaN);
+			rrdDef.addDatasource(it+"F", DsTypes.DT_COUNTER, 600, Double.NaN, Double.NaN);
+			rrdDef.addDatasource(it+"C", DsTypes.DT_COUNTER, 600, Double.NaN, Double.NaN);
 		}
 		//rrdDef.addDatasource("ws_sitaraService", DsTypes.DT_COUNTER, 600, Double.NaN, Double.NaN);
 		rrdDef.addArchive(ConsolFuns.CF_AVERAGE, 0.5, 1, 600);
