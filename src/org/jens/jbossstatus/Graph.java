@@ -51,9 +51,6 @@ public class Graph extends HttpServlet {
 			String jdbc = request.getParameter("jdbc");
 			String ejb = request.getParameter("ejb");
 			String ws = request.getParameter("ws");
-			
-			CronJob job = new CronJob();
-			
 			JFreeChart chart = null;
 			if (jdbc != null && !jdbc.equals("")) {
 				 chart = getConnectionCountFromSingleJdbcSmall(reader,jdbc);	
