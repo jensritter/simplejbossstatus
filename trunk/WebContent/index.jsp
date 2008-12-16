@@ -150,14 +150,15 @@ if (wsDetails.equals("1")) {
 		<% if (wsDetails.equals("1")) { %>
 			
 			<td class='header-small'>StartTime</td>
-			<td class='header-small'>FaultCount</td>
+			<td class='header-small'>RequestCount</td>
+			
 	
 			<td class='header-small'>Max Processing Time</td>
 			<td class='header-small'>Min Processing Time</td>
 			<td class='header-small'>Avg Processing Time</td>
 			
 		<% } %>
-		<td class='header-small'>RequestCount</td>
+		<td class='header-small'>FaultCount</td>
 		<td>Graph</td>
 	</tr>
 	<% for(String it : lstWs) { %>
@@ -166,7 +167,8 @@ if (wsDetails.equals("1")) {
 		<% if(wsDetails.equals("1")) {
 			
 			out.println("<td id='ws-detail'>" + reader.getWsStartTime(it) + "</td>");
-			out.println("<td id='ws-detail'>" + reader.getWsFaultCount(it) + "</td>");
+			
+			out.println("<td id='ws-detail'>" + reader.getWsRequestCount(it) + "</td>");
 			out.println("<td id='ws-detail'>" + reader.getWsMaxProcessingTime(it) + "</td>");
 			out.println("<td id='ws-detail'>" + reader.getWsMinProcessingTime(it) + "</td>");
 			out.println("<td id='ws-detail'>" + reader.getWsAverageProcessingTime(it) + "</td>");
@@ -177,7 +179,7 @@ if (wsDetails.equals("1")) {
 			out.println("<td id='ws-detail'>" + reader.getEjbAvailableCount(it) + "</td>");
 			*/
 		}
-		out.println("<td id='ws-detail'>" + reader.getWsRequestCount(it) + "</td>");
+		out.println("<td id='ws-detail'>" + reader.getWsFaultCount(it) + "</td>");
 		%>
 		<td><img src="WsUsageGraph?ejb=<%=it %>" /></td>
 		</tr>
