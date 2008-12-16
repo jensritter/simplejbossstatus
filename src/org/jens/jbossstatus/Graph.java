@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -26,7 +28,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * Servlet implementation class JdbcUsageGraph.
  */
 public class Graph extends HttpServlet {
-	
+	private final Log logger = LogFactory.getLog(Graph.class);
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
@@ -50,35 +52,32 @@ public class Graph extends HttpServlet {
 			String ejb = request.getParameter("ejb");
 			String ws = request.getParameter("ws");
 			
+			CronJob job = new CronJob();
+			
 			JFreeChart chart = null;
 			if (jdbc != null && !jdbc.equals("")) {
-				 chart = getConnectionCountFromSingleJdbcSmall(reader,jdbc);	
+				 chart = getConnectionCountFromSingleJdbcSmall(reader,job.getDbName(jdbc));	
 			}
 			if (ejb != null && !ejb.equals("")) {
-				chart = getCreateCount(reader,ejb);
+				chart = getCreateCount(reader,job.getDbName(ejb));
 			}
 			if (ws != null && !ws.equals("")) {
-				chart = getFailureCount(reader,ws);
+				chart = getFailureCount(reader,job.getDbName(ws));
 			}
 			response.setContentType("image/png");
 			ChartUtilities.writeChartAsPNG(response.getOutputStream(), chart, 600, 50);
 		} catch (NamingException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		} catch (AttributeNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		} catch (InstanceNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		} catch (MalformedObjectNameException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		} catch (MBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		} catch (ReflectionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		}
 	}
 	

@@ -145,7 +145,7 @@ public class Collector extends HttpServlet implements Servlet {
 		long beginTime = time - scale*60;
 		CronJob job = new CronJob();
 		graphDef.setTimeSpan(beginTime, time);
-		graphDef.datasource(db,job.getFilename(), db, ConsolFuns.CF_AVERAGE);
+		graphDef.datasource(db,job.getFilename(), job.getDbName(db), ConsolFuns.CF_AVERAGE);
 		graphDef.line(db, new Color(0xFF, 0, 0), null, 2);
 		graphDef.setFilename("-"); // inMemory !!
 		graphDef.setImageFormat("PNG");
