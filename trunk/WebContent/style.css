@@ -1,0 +1,19 @@
+@CHARSET "UTF-8";
+.header-small {
+	font-size: xx-small;
+}
+
+.jdbc-header-name {
+	width: 100px;
+	padding:10px;
+}
+
+.jdbc-detail {
+	visibility: visible;
+	float: left;
+}
+.jdbc-header {
+	visibility: visible;
+	float: left;
+}
+
