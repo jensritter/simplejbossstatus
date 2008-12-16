@@ -410,7 +410,7 @@ public class JmxReader {
 	private ObjectName findWs(String name) throws IOException {
 		Set<ObjectName> names = new TreeSet<ObjectName>(server.queryNames(null, null));
 		ArrayList<ObjectName> list = new  ArrayList<ObjectName>(names);
-		Pattern p = Pattern.compile("^jboss.ws:context="+name+",endpoint=(\\w+)$");
+		Pattern p = Pattern.compile("^jboss.ws:context="+name+",endpoint=(.+)$");
 		for(ObjectName it : list) {
 			String line = it.getCanonicalName();
 			Matcher m = p.matcher(line);
