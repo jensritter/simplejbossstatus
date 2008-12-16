@@ -22,21 +22,22 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
- * Servlet implementation class JdbcUsageGraph
+ * Servlet implementation class JdbcUsageGraph.
  */
 public class JdbcUsageGraph extends HttpServlet {
+	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
-       
+
     /**
-     * @see HttpServlet#HttpServlet()
+     * Instantiates a new jdbc usage graph.
      */
     public JdbcUsageGraph() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -74,7 +75,22 @@ public class JdbcUsageGraph extends HttpServlet {
 		}
 	}
 	
-	private JFreeChart getConnectionCountFromSingleJdbc(JmxReader reader, String jdbc) throws AttributeNotFoundException, InstanceNotFoundException, MalformedObjectNameException, MBeanException, ReflectionException, IOException {
+	/**
+	 * Gets the connection count from single jdbc.
+	 * 
+	 * @param reader the reader
+	 * @param jdbc the jdbc
+	 * 
+	 * @return the connection count from single jdbc
+	 * 
+	 * @throws AttributeNotFoundException the attribute not found exception
+	 * @throws InstanceNotFoundException the instance not found exception
+	 * @throws MalformedObjectNameException the malformed object name exception
+	 * @throws MBeanException the m bean exception
+	 * @throws ReflectionException the reflection exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	public static JFreeChart getConnectionCountFromSingleJdbc(JmxReader reader, String jdbc) throws AttributeNotFoundException, InstanceNotFoundException, MalformedObjectNameException, MBeanException, ReflectionException, IOException {
 		DefaultCategoryDataset data = new DefaultCategoryDataset();
 		data.addValue(reader.getJdbcMaxConnectionsInUse(jdbc),"used","ConnectionCount");
 		data.addValue(reader.getJdbcAvailableConnectionCount(jdbc),"Free","ConnectionCount");
@@ -85,6 +101,21 @@ public class JdbcUsageGraph extends HttpServlet {
 		return chart;
 	}
 	
+	/**
+	 * Gets the connection count from single jdbc small.
+	 * 
+	 * @param reader the reader
+	 * @param jdbc the jdbc
+	 * 
+	 * @return the connection count from single jdbc small
+	 * 
+	 * @throws AttributeNotFoundException the attribute not found exception
+	 * @throws InstanceNotFoundException the instance not found exception
+	 * @throws MalformedObjectNameException the malformed object name exception
+	 * @throws MBeanException the m bean exception
+	 * @throws ReflectionException the reflection exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private JFreeChart getConnectionCountFromSingleJdbcSmall(JmxReader reader, String jdbc) throws AttributeNotFoundException, InstanceNotFoundException, MalformedObjectNameException, MBeanException, ReflectionException, IOException {
 		DefaultCategoryDataset data = new DefaultCategoryDataset();
 		int used = reader.getJdbcConnectionCount(jdbc);
@@ -97,7 +128,21 @@ public class JdbcUsageGraph extends HttpServlet {
 		return chart;
 	}
 	
-	private JFreeChart getConnectionCountFromAllJdbc(JmxReader reader) throws AttributeNotFoundException, InstanceNotFoundException, MalformedObjectNameException, MBeanException, ReflectionException, IOException {
+	/**
+	 * Gets the connection count from all jdbc.
+	 * 
+	 * @param reader the reader
+	 * 
+	 * @return the connection count from all jdbc
+	 * 
+	 * @throws AttributeNotFoundException the attribute not found exception
+	 * @throws InstanceNotFoundException the instance not found exception
+	 * @throws MalformedObjectNameException the malformed object name exception
+	 * @throws MBeanException the m bean exception
+	 * @throws ReflectionException the reflection exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	public static JFreeChart getConnectionCountFromAllJdbc(JmxReader reader) throws AttributeNotFoundException, InstanceNotFoundException, MalformedObjectNameException, MBeanException, ReflectionException, IOException {
 		DefaultCategoryDataset data = new DefaultCategoryDataset();
 		String[] lst = reader.listJdbc();
 		for(String jdbc: lst) {

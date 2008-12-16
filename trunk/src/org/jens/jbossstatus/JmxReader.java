@@ -23,9 +23,6 @@ import javax.naming.NamingException;
  */
 public class JmxReader {
 	
-	/** The ctx. */
-	Context ctx = null;
-	
 	/** The server. */
 	MBeanServerConnection server = null;
 
@@ -37,7 +34,6 @@ public class JmxReader {
 	 * @throws NamingException the naming exception
 	 */
 	public JmxReader(Context ctx) throws NamingException {
-		this.ctx = ctx;
 		server = (MBeanServerConnection) ctx.lookup("jmx/invoker/RMIAdaptor");
 	}
 	
