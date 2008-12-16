@@ -29,4 +29,14 @@
     <servlet-name>EjbUsageGraph</servlet-name>
     <url-pattern>/EjbUsageGraph</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>WsUsageGraph</display-name>
+    <servlet-name>WsUsageGraph</servlet-name>
+    <servlet-class>org.jens.jbossstatus.WsUsageGraph</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>WsUsageGraph</servlet-name>
+    <url-pattern>/WsUsageGraph</url-pattern>
+  </servlet-mapping>
 </web-app>
