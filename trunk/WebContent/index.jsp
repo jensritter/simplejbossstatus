@@ -13,6 +13,7 @@
 </head>
 <body>
 <h3>JDBC</h3>
+<div style='float:right;'><a href="graph.jsp">History</a></div>
 <%
 
 Context ctx = new InitialContext();
@@ -86,7 +87,7 @@ if (wsDetails.equals("1")) {
 		}
 		out.println("<td id='jdbc-detail'>" + reader.getJdbcMaxConnectionsInUse(it) + "</td>");
 		%>
-		<td><img src="graph?jdbc=<%=it %>" /></td>
+		<td><img src="bar?jdbc=<%=it %>" /></td>
 	</tr>
 	<% } %>
 </table>
@@ -123,7 +124,7 @@ if (wsDetails.equals("1")) {
 		}
 		out.println("<td id='ejb-detail'>" + reader.getEjbCreateCount(it) + "</td>");
 		%>
-		<td><img src="graph?ejb=<%=it %>" /></td>
+		<td><img src="bar?ejb=<%=it %>" /></td>
 		</tr>
 	<% } %>
 </table>
@@ -165,7 +166,7 @@ if (wsDetails.equals("1")) {
 		}
 		out.println("<td id='ws-detail'>" + reader.getWsFaultCount(it) + "</td>");
 		%>
-		<td><img src="graph?ws=<%=it %>" /></td>
+		<td><img src="bar?ws=<%=it %>" /></td>
 		</tr>
 	<% } %>
 </table>

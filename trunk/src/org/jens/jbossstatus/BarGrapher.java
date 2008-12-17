@@ -23,19 +23,21 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-// TODO: Auto-generated Javadoc
 /**
  * Servlet implementation class JdbcUsageGraph.
  */
-public class Graph extends HttpServlet {
-	private final Log logger = LogFactory.getLog(Graph.class);
+public class BarGrapher extends HttpServlet {
+	
+	/** The logger. */
+	private final Log logger = LogFactory.getLog(BarGrapher.class);
+	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
     /**
      * Instantiates a new graph.
      */
-    public Graph() {
+    public BarGrapher() {
         super();
     }
 
@@ -98,7 +100,6 @@ public class Graph extends HttpServlet {
 		data.addValue(reader.getJdbcMaxConnectionsInUse(jdbc),"used","ConnectionCount");
 		data.addValue(reader.getJdbcAvailableConnectionCount(jdbc),"Free","ConnectionCount");
 
-		
 		JFreeChart chart = ChartFactory.createStackedBarChart(jdbc,"", "", data, PlotOrientation.HORIZONTAL, false, false, false);
 		
 		return chart;
@@ -124,9 +125,7 @@ public class Graph extends HttpServlet {
 		int used = reader.getJdbcConnectionCount(jdbc);
 		data.addValue(used,"used","");
 		data.addValue(reader.getJdbcAvailableConnectionCount(jdbc) - used,"Free","");
-		
-		
-		
+
 		JFreeChart chart = ChartFactory.createStackedBarChart("","", "", data, PlotOrientation.HORIZONTAL, false, false, false);
 		return chart;
 	}

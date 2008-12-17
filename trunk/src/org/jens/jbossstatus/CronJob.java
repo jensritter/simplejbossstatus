@@ -1,7 +1,11 @@
 package org.jens.jbossstatus;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Date;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
@@ -16,22 +20,46 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jrobin.core.ConsolFuns;
 import org.jrobin.core.DsTypes;
+import org.jrobin.core.FetchData;
+import org.jrobin.core.FetchRequest;
 import org.jrobin.core.RrdDb;
 import org.jrobin.core.RrdDef;
 import org.jrobin.core.RrdException;
 import org.jrobin.core.Sample;
+import org.jrobin.graph.RrdGraph;
+import org.jrobin.graph.RrdGraphDef;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+/**
+ * The Class CronJob.
+ */
 public class CronJob implements Job{
 	
+	/** The logger. */
 	private final Log logger = LogFactory.getLog(CronJob.class);
+	
+	/** The Constant EVERY_SECOND. */
+	public static final int EVERY_SECOND=60*5;
+	//public static final int EVERY_SECOND=1;
 
+	/**
+	 * Gets the filename.
+	 * 
+	 * @return the filename
+	 */
 	public String getFilename() {
 		return "/var/tmp/database.jrrd";
 	}
 	
+	/**
+	 * Gets the db name.
+	 * 
+	 * @param id the id
+	 * 
+	 * @return the db name
+	 */
 	public String getDbName(String id) {
 		int counter = 0;
 		for(int i = 0; i< id.length(); i++) {
@@ -40,7 +68,19 @@ public class CronJob implements Job{
 		return "" + counter;
 	}
 	
+	/**
+	 * Gets the unix time stamp.
+	 * 
+	 * @return the unix time stamp
+	 */
+	public static Long getUnixTimeStamp() {
+		return new Date().getTime()/ 1000L;
+	}
+	
 
+	/* (non-Javadoc)
+	 * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
+	 */
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		try {
@@ -68,7 +108,7 @@ public class CronJob implements Job{
 				rrdDb = new RrdDb(getFilename());
 			}
 			Sample sample = rrdDb.createSample();
-			long time = Collector.getUnixTimeStamp();
+			long time = getUnixTimeStamp();
 			StringBuilder st = new StringBuilder();
 			st.append(time).append(":");
 			for(int i=0; i < jdbcList.length; i++) {
@@ -115,10 +155,17 @@ public class CronJob implements Job{
 		
 	}
 	
+	/**
+	 * Inits the rrd.
+	 * 
+	 * @throws RrdException the rrd exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws NamingException the naming exception
+	 */
 	public void initRRD() throws RrdException, IOException, NamingException {
 		RrdDef rrdDef = new RrdDef(getFilename());
-		rrdDef.setStartTime(Collector.getUnixTimeStamp());
-		rrdDef.setStep(Collector.EVERY_SECOND);
+		rrdDef.setStartTime(getUnixTimeStamp());
+		rrdDef.setStep(EVERY_SECOND);
 		JmxReader reader = new JmxReader(new InitialContext());
 		String[] jdbcList = reader.listJdbc();
 		String[] wsList = reader.listWebServices();
@@ -143,6 +190,60 @@ public class CronJob implements Job{
 		
 		RrdDb rrdDb = new RrdDb(rrdDef);
 		rrdDb.close();
+	}
+	
+	/**
+	 * Graph.
+	 * 
+	 * @param db the db
+	 * @param out the out
+	 * @param scaleValue the scale value
+	 * 
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws RrdException the rrd exception
+	 */
+	public void graph(String db,int scaleValue, OutputStream out) throws IOException, RrdException {
+		logger.debug("SCALE: " + scaleValue);
+		int scale = scaleValue;
+		if (scaleValue == 0) {
+			scale = 10*60;
+		}
+		
+		RrdGraphDef graphDef = new RrdGraphDef();
+		long time = getUnixTimeStamp();
+		long beginTime = time - scale*60;
+		graphDef.setTimeSpan(beginTime, time);
+		graphDef.datasource(db,getFilename(), getDbName(db), ConsolFuns.CF_AVERAGE);
+		graphDef.line(db, new Color(0xFF, 0, 0), null, 2);
+		graphDef.setFilename("-"); // inMemory !!
+		graphDef.setImageFormat("PNG");
+		graphDef.setTitle(db);
+		//graphDef.setFilename("/tmp/x/speed.gif");
+		graphDef.setWidth(400);
+		graphDef.setHeight(100);
+		RrdGraph graph = new RrdGraph(graphDef);
+		BufferedImage bi = new BufferedImage(480,162,BufferedImage.TYPE_INT_RGB);
+		graph.render(bi.getGraphics());
+		javax.imageio.ImageIO.write(bi,"png",out);
+	}
+	
+	/**
+	 * Dump.
+	 * 
+	 * @return the string
+	 * 
+	 * @throws RrdException the rrd exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	public String dump() throws RrdException, IOException {
+		RrdDb rrdDb = new RrdDb(getFilename());
+		long ende = getUnixTimeStamp();
+		long begin = ende - 100; 
+		FetchRequest fetchRequest = rrdDb.createFetchRequest(ConsolFuns.CF_AVERAGE, begin,ende);
+		FetchData fetchData = fetchRequest.fetchData();
+		String result = fetchData.dump();
+		rrdDb.close();
+		return result;
 	}
 
 }
