@@ -11,24 +11,24 @@
   </welcome-file-list>
   <servlet>
     <description></description>
-    <display-name>Graph</display-name>
-    <servlet-name>Graph</servlet-name>
-    <servlet-class>org.jens.jbossstatus.Graph</servlet-class>
+    <display-name>BarGrapher</display-name>
+    <servlet-name>BarGrapher</servlet-name>
+    <servlet-class>org.jens.jbossstatus.BarGrapher</servlet-class>
     
   </servlet>
   <servlet-mapping>
-    <servlet-name>Graph</servlet-name>
-    <url-pattern>/graph</url-pattern>
+    <servlet-name>BarGrapher</servlet-name>
+    <url-pattern>/bar</url-pattern>
   </servlet-mapping>
   <servlet>
     <description></description>
-    <display-name>Collector</display-name>
-    <servlet-name>Collector</servlet-name>
-    <servlet-class>org.jens.jbossstatus.Collector</servlet-class>
+    <display-name>RrdBarGrapher</display-name>
+    <servlet-name>RrdBarGrapher</servlet-name>
+    <servlet-class>org.jens.jbossstatus.RrdBarGrapher</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
-    <servlet-name>Collector</servlet-name>
-    <url-pattern>/Collector</url-pattern>
+    <servlet-name>RrdBarGrapher</servlet-name>
+    <url-pattern>/rrdbar</url-pattern>
   </servlet-mapping>
 </web-app>
