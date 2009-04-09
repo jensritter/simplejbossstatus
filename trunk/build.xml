@@ -4,7 +4,7 @@
 	default="build"
 	basedir="."
 >
-	<description>Describe Your Project here</description>
+	<description>JBossStatus</description>
 
 	<property file="../workspace.properties" />
 	<property file="mybuild.properties" />
@@ -52,7 +52,7 @@
 	<!--
 	<import file="${basedir}/../eclipsesJava/buildScripts/jboss.xml" />
 	 -->
-	
+
 	<import file="${basedir}/../eclipsesJava/buildScripts/jboss.xml" />
 
 	<!-- Resouces -->
@@ -83,7 +83,7 @@
 			<dependency groupId="jfree" artifactId="jfreechart" version="1.0.11" />
 			<dependency groupId="commons-logging" artifactId="commons-logging" version="1.1.1" />
 			<dependency groupId="org.jrobin" artifactId="jrobin" version="1.5.9" />
-			<!-- 
+			<!--
 			<dependency groupId="org.hibernate" artifactId="hibernate-annotations" version="3.3.1.GA" />
 			<dependency groupId="org.hibernate" artifactId="hibernate-entitymanager" version="3.3.1.ga" />
 			<dependency groupId="org.hibernate" artifactId="hibernate-c3p0" version="3.3.1.GA" />
@@ -93,8 +93,8 @@
 		<copy todir="WebContent/WEB-INF/lib">
 			<fileset refid="dependency.fileset" />
 			<mapper type="flatten" />
-			<!-- 
-			<mapper classpathref="maven-ant-tasks.classpath" classname="org.apache.maven.artifact.ant.VersionMapper" 
+			<!--
+			<mapper classpathref="maven-ant-tasks.classpath" classname="org.apache.maven.artifact.ant.VersionMapper"
 							from="${dependency.versions}" to="flatten" />
 			 -->
 		</copy>
@@ -108,7 +108,7 @@
 		</fileset>
 
 		<path refid="dependency.classpath" />
-		
+
 		<path refid="eclipse-lib" />
 
 		<!-- Enable for WebProjects -->
@@ -121,7 +121,7 @@
 		<path refid="jboss4-lib" />
 		<path refid="jboss5-lib" />
 		-->
-		
+
 		<path refid="jboss4-lib" />
 		<path refid="jboss4-quartz" />
 
@@ -178,7 +178,7 @@
 		</copy>
 	</target>
 
-<!-- 
+<!--
 	<import file="${basedir}/../eclipsesJava/buildScripts/jboss.xml" />
  -->
 	<target name="wsimport" depends="prepare" description="Erzeugt die Client-Stub-Classen">
@@ -191,9 +191,9 @@
 		</exec>
 		-->
 		<taskdef name="wsconsume" classname="org.jboss.wsf.spi.tools.ant.WSConsumeTask">
-			<classpath refid="wsconsume-lib"/>						
-		</taskdef>		
-		<wsconsume 
+			<classpath refid="wsconsume-lib"/>
+		</taskdef>
+		<wsconsume
 				  fork="true"
 				  verbose="true"
 				  destdir="${build.dir}/Stub/"
@@ -268,18 +268,18 @@
 		  </batchtest>
 		</junit>
 	</target>
-	
+
 	<target name="hudson" depends="build,junit,findbugs" description="Hudon-Task">
 		<echo message="done" />
 	</target>
-	
+
 	<target name="findbugs" depends="war">
 		<!-- FindBugs task -->
 		<path id="findbugs-lib">
 			<pathelement location="${findbugs.home}/lib/findbugs-ant.jar"/>
 		</path>
 		<taskdef name="findbugs" classpathref="findbugs-lib" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
-		<findbugs home="${findbugs.home}" 
+		<findbugs home="${findbugs.home}"
 			outputFile="${dist.dir}/findbugs.xml" output="xml"
 			quietErrors="true"
 			reportLevel="low"
@@ -315,7 +315,7 @@
 				</fileset>
 			</jar>
 	</target>
-	
+
 	<target name="jar_ejb" depends="build" description="jar-task f. erstellen von EJB's">
 			<jar destfile="${dist.dir}/${jar.file.small}">
 				<fileset dir="${build.dir}">
@@ -334,12 +334,12 @@
 			<zipgroupfileset dir="lib" includes="*.jar"/>
 		</zip>
 	</target>
-	
-	
+
+
 	<target name="signJar" depends="jar" description="sign Jar">
 		<signjar jar="${dist.dir}/${jar.file}" signedjar="${dist.dir}/${jar.signed.file}" storepass="${jar.signed.storepass}" keypass="${jar.signed.keypass}" alias="${jar.signed.alias}" />
 	</target>
-	
+
 	<target name="lightJar" depends="build">
 		<jar destfile="${dist.dir}/lightJar_.jar" update="true">
 			<fileset dir="${build.dir}">
@@ -401,11 +401,11 @@
 			Create the Classes, needed for Sun's Jaxws
 		-->
 	</target>
-	
+
 	<target name="ejb" depends="signJar,common,lightJar">
 		<echo message="ejb done" />
 	</target>
-	
+
 	<target name="ejbDependencies" depends="prepare" description="Build-extern EJB Project and copy dist-files">
 		<ant antfile="build.xml" dir="../ejbDirectory" target="ejb" inheritall="false"/>
 		<mkdir dir="${dist.dir}/lib" />
@@ -430,27 +430,27 @@
 				-->
 		</war>
 	</target>
-	
+
 	<target name="ear" depends="war">
 		<mkdir dir="${dist.dir}/lib" />
-		
+
 		<!--  Die EJB's  -->
 		<artifact:dependencies filesetId="ejb.fileset" useScope="runtime" versionsId="ejb.versions">
 			<!-- <dependency groupId="org.jens.testing" artifactId="JB5EJB" version="1.0" />  -->
 		</artifact:dependencies>
-		
+
 		<!-- Die Library-Libs -->
 		<artifact:dependencies filesetId="dependency.fileset" useScope="runtime">
 			<dependency groupId="org.jens" artifactId="eclipsesJava" version="1.0" />
 			<!-- <dependency groupId="org.jens.testing" artifactId="JB5EJB-common" version="1.0" />  -->
 		</artifact:dependencies>
-		
+
 		<copy todir="${dist.dir}">
 			<fileset refid="ejb.fileset" />
-			<mapper classpathref="maven-ant-tasks.classpath" classname="org.apache.maven.artifact.ant.VersionMapper" 
+			<mapper classpathref="maven-ant-tasks.classpath" classname="org.apache.maven.artifact.ant.VersionMapper"
 							from="${ejb.versions}" to="flatten" />
 		</copy>
-		
+
 		<copy todir="${dist.dir}/lib">
 			<fileset refid="dependency.fileset" />
 			<mapper type="flatten" />
@@ -462,17 +462,17 @@
 			<fileset dir="${dist.dir}" includes="lib/*"/>
 		</ear>
 	</target>
-	
+
 	<target name="deploy-maven" depends="signJar,lightJar,common">
 		<artifact:pom id="maven.project" file="data/pom.xml" />
-		<!-- 
+		<!--
 		<artifact:deploy file="${dist.dir}/${deploy.war}">
 		  -->
 	  	<artifact:deploy file="${dist.dir}/${jar.signed.file}">
 	  		<remoteRepository url="${nexus.releaseurl}" id="releases" />
 	  		<pom refid="maven.project"/>
 	  	</artifact:deploy>
-	  	<!-- 
+	  	<!--
 		<artifact:pom id="mavenlight.project" file="data/pom-light.xml" />
 	  	<artifact:deploy file="${dist.dir}/lightJar.jar">
 	  		<remoteRepository url="${nexus.releaseurl}" id="releases" />
@@ -485,7 +485,7 @@
 	  	</artifact:deploy>
 	  	 -->
 	</target>
-	
+
 	<target name="run" depends="jar" description="Run MainClass">
 		<java fork="true" classname="${dist.classname}" classpath="${dist.dir}/${jar.file}" />
 	</target>
@@ -515,11 +515,11 @@
 		<echo message="deployed" />
 	</target>
 	-->
-	
+
 	<!--  Deploy JBOSS -->
 	<target name="deploy-jboss" depends="war">
 		<copy todir="${jboss4.deploy.local}" file="${dist.dir}/${deploy.war}" />
 		<echo message="deployed" />
 	</target>
-	 
+
 </project>
