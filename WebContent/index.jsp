@@ -13,7 +13,10 @@
 </head>
 <body>
 <h3>JDBC</h3>
-<div style='float:right;'><a href="graph.jsp">History</a></div>
+<div style='float:right;'>
+<a href="graph.jsp">History</a> <br />
+<a href="simple.jsp">SimpleDisplay</a> <br />
+</div>
 <%
 
 Context ctx = new InitialContext();
@@ -62,24 +65,24 @@ if (wsDetails.equals("1")) {
 			<td class='header-small'>MaxSize</td>
 			<td class='header-small'>MinSize</td>
 			<td class='header-small'>IdleTimeoutMinutes</td>
-	
+
 			<td class='header-small'>ConnectionCount</td>
 			<td class='header-small'>AvailableConnectionCount</td>
 			<td class='header-small'>InUseConnectionCount</td>
-			 
+
 		<% } %>
 		<td class='header-small'>MaxConnectionsInUse</td>
 		<td>Graph</td>
 	</tr>
-	
+
 	<% for (String it : lstjdbc) { %>
 	<tr>
 		<td><%=it %></td>
-		<% if(jdbcDetails.equals("1")) { 
+		<% if(jdbcDetails.equals("1")) {
 			out.println("<td id='jdbc-detail'>" + reader.getJdbcMaxSize(it) + "</td>");
 			out.println("<td id='jdbc-detail'>" + reader.getJdbcMinSize(it) + "</td>");
 			out.println("<td id='jdbc-detail'>" + reader.getJdbcIdleTimeoutMinutes(it) + "</td>");
-			
+
 			out.println("<td id='jdbc-detail'>" + reader.getJdbcConnectionCount(it) + "</td>");
 			out.println("<td id='jdbc-detail'>" + reader.getJdbcAvailableConnectionCount(it) + "</td>");
 
@@ -91,7 +94,7 @@ if (wsDetails.equals("1")) {
 	</tr>
 	<% } %>
 </table>
-	
+
 <h3>EJB</h3>
 <table border="1">
 	<tr>
@@ -102,10 +105,10 @@ if (wsDetails.equals("1")) {
 			</form>
 		</td>
 		<% if (ejbDetails.equals("1")) { %>
-			
+
 			<td class='header-small'>CurrentSize</td>
 			<td class='header-small'>RemoveCount</td>
-	
+
 			<td class='header-small'>MaxSize</td>
 			<td class='header-small'>AvailableCount</td>
 		<% } %>
@@ -116,8 +119,8 @@ if (wsDetails.equals("1")) {
 		<tr>
 		<td><%=it %></td>
 		<% if(ejbDetails.equals("1")) {
-			
-			out.println("<td id='ejb-detail'>" + reader.getEjbCurrentSize(it) + "</td>");	
+
+			out.println("<td id='ejb-detail'>" + reader.getEjbCurrentSize(it) + "</td>");
 			out.println("<td id='ejb-detail'>" + reader.getEjbRemoveCount(it) + "</td>");
 			out.println("<td id='ejb-detail'>" + reader.getEjbMaxSize(it) + "</td>");
 			out.println("<td id='ejb-detail'>" + reader.getEjbAvailableCount(it) + "</td>");
@@ -139,15 +142,15 @@ if (wsDetails.equals("1")) {
 			</form>
 		</td>
 		<% if (wsDetails.equals("1")) { %>
-			
+
 			<td class='header-small'>StartTime</td>
 			<td class='header-small'>RequestCount</td>
-			
-	
+
+
 			<td class='header-small'>Max Processing Time</td>
 			<td class='header-small'>Min Processing Time</td>
 			<td class='header-small'>Avg Processing Time</td>
-			
+
 		<% } %>
 		<td class='header-small'>FaultCount</td>
 		<td>Graph</td>
@@ -156,9 +159,9 @@ if (wsDetails.equals("1")) {
 		<tr>
 		<td><%=it %></td>
 		<% if(wsDetails.equals("1")) {
-			
+
 			out.println("<td id='ws-detail'>" + reader.getWsStartTime(it) + "</td>");
-			
+
 			out.println("<td id='ws-detail'>" + reader.getWsRequestCount(it) + "</td>");
 			out.println("<td id='ws-detail'>" + reader.getWsMaxProcessingTime(it) + "</td>");
 			out.println("<td id='ws-detail'>" + reader.getWsMinProcessingTime(it) + "</td>");
