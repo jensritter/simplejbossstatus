@@ -441,7 +441,7 @@
 
 		<!-- Die Library-Libs -->
 		<artifact:dependencies filesetId="dependency.fileset" useScope="runtime">
-			<dependency groupId="org.jens" artifactId="eclipsesJava" version="1.0" />
+			<dependency groupId="org.jens" artifactId="eclipsesJava" version="1.0-SNAPSHOT" />
 			<!-- <dependency groupId="org.jens.testing" artifactId="JB5EJB-common" version="1.0" />  -->
 		</artifact:dependencies>
 
