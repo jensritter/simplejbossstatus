@@ -1,0 +1,1 @@
+It's my first attempt to let non-javadevelopers "understand" the current status of a running jboss.
